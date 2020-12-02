@@ -1,34 +1,14 @@
-use std::time::{Duration, Instant};
+use std::time::{Instant};
 
-// O(n^2) ~ 115.2µs (100 runs)
-fn part_one_v1(nums: &Vec<usize>) -> usize {
-    for x in nums.iter() {
-        for y in nums.iter() {
-            if x + y == 2020 {
-                return x * y;
-            }
-        }
-    }
-
-    return 0;
-}
-
+// with regular array: 5.663µs
 // O(n) ~ 7.115µs (100 runs)
-fn part_one_v2(nums: &Vec<usize>) -> usize {
-    return get_product_v2(&nums, 2020);
-}
-
-// O(n)
-fn get_product_v2(nums: &Vec<usize>, sum: usize) -> usize {
+fn part_one(nums: &[usize]) -> usize {
     let mut visited = [false; 2020];
 
-    for n in nums.iter() {
-        if n > &sum {
-            continue;
-        }
-        let m = sum - n;
+    for n in nums {
+        let m = 2020 - n;
         if visited[m] {
-            return n * (m);
+            return n * m;
         }
 
         visited[m] = true;
@@ -37,27 +17,19 @@ fn get_product_v2(nums: &Vec<usize>, sum: usize) -> usize {
     return 0;
 }
 
-// O(n^3) ~ 61.351709ms, (100 runs)
-fn part_two_v1(nums: &Vec<usize>) -> usize {
+// O(n^2) ~ 
+fn part_two(nums: &[usize]) -> usize {
+    let mut visited = [false; 2020];
+
     for x in nums.iter() {
         for y in nums.iter() {
-            for z in nums.iter() {
-                if x + y + z == 2020 {
-                    return x * y * z;
-                }
+            let s = x + y;
+            if s > 2020 { continue; }
+            let z = 2020 - s;
+            if visited[z] {
+                return x * y * z;
             }
-        }
-    }
-
-    return 0;
-}
-
-// O(n^2) ~ 
-fn part_two_v2(nums: &Vec<usize>) -> usize {
-    for x in nums.iter() {
-        let product = get_product_v2(&nums, 2020 - x);
-        if product != 0 {
-            return x * product;
+            visited[z] = true;
         }
     }
 
@@ -75,36 +47,21 @@ fn benchmark(runs: u32, fun_to_test: &dyn Fn()) {
 }
 
 pub fn main() {
-    let input = "1753\n1976\n1574\n308\n1384\n1191\n1731\n1829\n1658\n1908\n1663\n2001\n1298\n1888\n1134\n1213\n965\n2009\n1071\n1591\n1402\n1184\n1836\n1536\n1038\n1871\n1354\n1149\n1863\n1728\n1896\n1599\n1556\n1222\n1909\n1858\n1754\n1947\n1907\n1656\n1135\n1845\n1504\n1473\n1401\n1700\n1067\n1790\n1783\n1539\n1087\n1614\n1856\n1895\n1564\n1106\n1204\n1492\n1361\n1897\n1977\n1210\n1867\n1797\n1232\n1148\n1520\n1989\n210\n1259\n570\n1512\n1894\n1309\n1154\n1327\n1817\n1875\n1702\n1885\n1664\n1220\n1208\n2000\n1178\n1423\n1454\n1780\n1710\n1362\n1816\n1491\n1363\n1478\n1648\n1163\n1554\n1195\n1500\n1320\n1698\n1636\n1097\n1573\n1846\n1747\n1138\n1083\n1505\n1387\n1900\n1143\n1905\n1826\n1735\n1496\n1687\n1704\n1916\n1991\n1750\n1637\n1742\n691\n1967\n1272\n1657\n1140\n1070\n1985\n1405\n1959\n1218\n1878\n1340\n1722\n2003\n1258\n1726\n1766\n1868\n1714\n1463\n2006\n1537\n1570\n1526\n1578\n1744\n1734\n1325\n196\n1935\n1849\n1424\n1972\n1602\n1859\n1341\n1177\n1901\n1902\n1247\n2004\n1350\n1965\n1407\n836\n1899\n1804\n975\n1510\n1898\n1560\n1777\n1523\n1822\n1830\n1855\n1839\n1482\n1661\n1835\n1343\n1278\n1449\n1136\n1732\n2008\n1686\n1775\n1952\n1444\n1499\n1680\n1752\n1597\n1963\n1117\n776".to_string();
-    
-    let nums: Vec<usize> = input
-        .split("\n")
-        .map(|n| n.parse().unwrap())
-        .collect();
+    let nums: [usize; 200] = [1753, 1976, 1574, 308, 1384, 1191, 1731, 1829, 1658, 1908, 1663, 2001, 1298, 1888, 1134, 1213, 965, 2009, 1071, 1591, 1402, 1184, 1836, 1536, 1038, 1871, 1354, 1149, 1863, 1728, 1896, 1599, 1556, 1222, 1909, 1858, 1754, 1947, 1907, 1656, 1135, 1845, 1504, 1473, 1401, 1700, 1067, 1790, 1783, 1539, 1087, 1614, 1856, 1895, 1564, 1106, 1204, 1492, 1361, 1897, 1977, 1210, 1867, 1797, 1232, 1148, 1520, 1989, 210, 1259, 570, 1512, 1894, 1309, 1154, 1327, 1817, 1875, 1702, 1885, 1664, 1220, 1208, 2000, 1178, 1423, 1454, 1780, 1710, 1362, 1816, 1491, 1363, 1478, 1648, 1163, 1554, 1195, 1500, 1320, 1698, 1636, 1097, 1573, 1846, 1747, 1138, 1083, 1505, 1387, 1900, 1143, 1905, 1826, 1735, 1496, 1687, 1704, 1916, 1991, 1750, 1637, 1742, 691, 1967, 1272, 1657, 1140, 1070, 1985, 1405, 1959, 1218, 1878, 1340, 1722, 2003, 1258, 1726, 1766, 1868, 1714, 1463, 2006, 1537, 1570, 1526, 1578, 1744, 1734, 1325, 196, 1935, 1849, 1424, 1972, 1602, 1859, 1341, 1177, 1901, 1902, 1247, 2004, 1350, 1965, 1407, 836, 1899, 1804, 975, 1510, 1898, 1560, 1777, 1523, 1822, 1830, 1855, 1839, 1482, 1661, 1835, 1343, 1278, 1449, 1136, 1732, 2008, 1686, 1775, 1952, 1444, 1499, 1680, 1752, 1597, 1963, 1117, 776];
 
     // -- BENCHMARKS --
-
-    // print!("part_one_v1 O(n^2): ");
-    // benchmark(1000, &|| {
-    //     part_one_v1(&nums);
-    //     return;
-    // });
-
-    print!("part_one_v2 O(n): ");
-    benchmark(1000, &|| {
-        part_one_v2(&nums);
+    
+    println!("part_one result: {}", part_two(&nums));
+    print!("part_one O(n^2): ");
+    benchmark(100_000, &|| {
+        part_one(&nums);
         return;
     });
 
-    // print!("part_two_v1 O(n^3): ");
-    // benchmark(100, &|| {
-    //     part_two_v1(&nums);
-    //     return;
-    // });
-
-    print!("part_two_v2 O(n^2): ");
-    benchmark(1000, &|| {
-        part_two_v2(&nums);
+    println!("part_two result: {}", part_two(&nums));
+    print!("part_two O(n^2): ");
+    benchmark(10_000, &|| {
+        part_two(&nums);
         return;
     });
 }
